@@ -26,8 +26,8 @@ public class Calculator {
         return num * num;
     }
 
-    public double cube(double num){
-        return num * num * num;
-    }
+    // public double cube(double num){
+    //     return num * num * num;
+    // }
 
 }
