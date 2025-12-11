@@ -5,24 +5,86 @@ trigger:
       - main
       - development
 
-pool:
-  vmImage: 'ubuntu-latest'
+stages: 
 
-steps:
-- task: Gradle@3
-  inputs:
-    workingDirectory: ''
-    gradleWrapperFile: 'gradlew'
-    gradleOptions: '-Xmx3072m'
-    javaHomeOption: 'JDKVersion'
-    jdkVersionOption: '17'
-    jdkArchitectureOption: 'x64'
-    publishJUnitResults: true
-    testResultsFiles: '**/TEST-*.xml'
-    tasks: 'build jacocoTestReport check' ## fail pipeline if this doesnt pass
+- stage: Build
+  displayName: 'Build and Unit Tests'
+  jobs:
+  - job: BuildJob
+    pool:
+      vmImage: 'ubuntu-latest'
     
+    steps:
+    - task: Gradle@3
+      inputs:
+        workingDirectory: ''
+        gradleWrapperFile: 'gradlew'
+        gradleOptions: '-Xmx3072m'
+        javaHomeOption: 'JDKVersion'
+        jdkVersionOption: '17'
+        jdkArchitectureOption: 'x64'
+        publishJUnitResults: true
+        testResultsFiles: '**/TEST-*.xml'
+        tasks: 'build jacocoTestReport check' ## fail pipeline if this doesnt pass
+    - task: PublishCodeCoverageResults@2
+      inputs:
+        summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/build/reports/jacoco/test/jacocoTestReport.xml'
+        pathToSources: '$(System.DefaultWorkingDirectory)/app/src/main/java/'
+    - task: PublishBuildArtifacts@1
+      inputs:
+        pathToPublish: 'build/libs'
+        artifactName: 'app'
 
-- task: PublishCodeCoverageResults@2
-  inputs:
-    summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/build/reports/jacoco/test/jacocoTestReport.xml'
-    pathToSources: '$(System.DefaultWorkingDirectory)/app/src/main/java/'
+## TODO
+- stage: Security
+  displayName: 'Security Test (Dummy)'
+  jobs:
+  - job: SecurityJob
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - script: echo "Running security tests (dummy)"
+
+- stage: Performance
+  displayName: 'Performance Test (Dummy)'
+  jobs:
+  - job: PerformanceJob
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - script: echo "Running performance tests (dummy)"
+
+- stage: UAT
+  displayName: 'Selenium UAT (Dummy)'
+  jobs:
+  - job: UATJob
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - script: echo "Running Selenium UAT (dummy)"
+
+- stage: DeployTest
+  displayName: 'Deploy to Test Environment'
+  jobs:
+  - deployment: DeployTest
+    environment: 'Test'
+    pool:
+      vmImage: 'ubuntu-latest'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - script: echo "Deploying calculator app to Test environment (dummy)"
+
+- stage: DeployProd
+  displayName: 'Deploy to Prod Environment'
+  jobs:
+  - deployment: DeployProd
+    environment: 'Prod'
+    pool:
+      vmImage: 'ubuntu-latest'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - script: echo "Deploying calculator app to Prod environment (dummy)"
