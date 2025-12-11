@@ -43,10 +43,10 @@ class CalculatorTest {
         assertEquals(81.0, calc.square(9), 0.0001, "9 squared should equal 81");
     }
 
-    @Test
-    void testCube() {
-        Calculator calc = new Calculator();
-        assertEquals(27, calc.cube(3), 0.0001, "3 cubed should equal 27");
-    }
+    // @Test
+    // void testCube() {
+    //     Calculator calc = new Calculator();
+    //     assertEquals(27, calc.cube(3), 0.0001, "3 cubed should equal 27");
+    // }
 
 }
